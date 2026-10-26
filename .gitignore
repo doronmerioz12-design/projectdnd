@@ -1,0 +1,22 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IDEs ###
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+### Secrets & Environment ###
+.env
+*.env
+application-local.properties
+application-secret.properties
+
+# Environment files (with and without dot)
+env
+.env
+*.env
