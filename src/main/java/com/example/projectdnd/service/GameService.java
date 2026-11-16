@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+/**
+ * Core gameplay service handling character actions such as casting spells,
+ * channeling runes, and taking long rests. Coordinates persistence updates
+ * with {@link UserRepository} and narrative generation with {@link StorytellerService}.
+ */
 @Service
 public class GameService {
 
@@ -17,11 +22,27 @@ public class GameService {
     private final StorytellerService storytellerService;
     private final Random random = new Random();
 
+    /**
+     * Constructs a {@code GameService} with the required repository and AI storyteller dependencies.
+     *
+     * @param userRepository     repository for querying and updating player character state
+     * @param storytellerService AI service for generating immersive D&D narrative descriptions
+     */
     public GameService(UserRepository userRepository, StorytellerService storytellerService) {
         this.userRepository = userRepository;
         this.storytellerService = storytellerService;
     }
 
+    /**
+     * Executes a predefined spell cast for the specified user.
+     * Verifies sufficient mana (fixed cost of 10), deducts mana, rolls a d20 against DC 10,
+     * persists the updated character state, and requests an AI narrative description.
+     *
+     * @param username the username of the player casting the spell
+     * @param spell    the {@link Magic} spell being cast
+     * @return an {@link ExecutionResultDto} containing roll outcome, mana usage, and story narration
+     * @throws RuntimeException if the user is not found or does not have enough mana
+     */
     public ExecutionResultDto castAbility(String username, Magic spell) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
@@ -66,6 +87,17 @@ public class GameService {
                 .build();
     }
 
+    /**
+     * Channels a magical realm rune with a custom mana cost for the specified user.
+     * Verifies sufficient mana, deducts the specified mana cost, rolls a d20 plus the character's
+     * level against DC 12, persists the updated user, and generates AI narration.
+     *
+     * @param username the username of the player channeling the rune
+     * @param rune     the {@link Realms} rune being channeled
+     * @param manaCost the amount of mana to spend on channeling the rune
+     * @return an {@link ExecutionResultDto} containing roll outcome, mana usage, and story narration
+     * @throws RuntimeException if the user is not found or does not have enough mana
+     */
     public ExecutionResultDto castAbility(String username, Realms rune, int manaCost) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
@@ -111,6 +143,14 @@ public class GameService {
                 .build();
     }
 
+    /**
+     * Executes a long rest for the specified user, restoring their Hit Points and Mana
+     * to their respective maximum values and generating a campfire rest narration.
+     *
+     * @param username the username of the player taking a rest
+     * @return a {@link RestResultDto} detailing the restored HP/Mana, current totals, and AI story
+     * @throws RuntimeException if the user is not found or if saving fails
+     */
     public RestResultDto takeRest(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));

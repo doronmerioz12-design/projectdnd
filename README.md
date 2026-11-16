@@ -1,6 +1,6 @@
 # Project DnD
 
-![Project Logo](https://raw.githubusercontent.com/example/projectdnd/main/docs/logo.png)
+![Project Logo](docs/logo.png)
 
 A **Spring Boot** based backend for a simple Dungeons & Dragons (DnD) style game service. The application provides REST APIs for managing users, games, characters, and combat actions. It demonstrates clean architecture, layered design, and **global exception handling** that returns consistent JSON error responses.
 
@@ -129,6 +129,16 @@ mvn test
 
 The test suite includes controller tests, service layer unit tests, and repository integration tests against the H2 database.
 
+### JUnit 5 Test Suite & Architecture
+
+This project features a comprehensive automated test suite built with **JUnit 5 (Jupiter)**, **JUnit Platform Suite**, **Mockito**, and **Spring Boot Test (`MockMvc`)**:
+
+- **`AllTestsSuite`** – A JUnit Platform `@Suite` (`@SelectClasses`) that aggregates and runs `DiceServiceTest`, `GameServiceTest`, and `GameControllerTest` together as a unified test suite.
+- **`CustomReportWatcher`** – A custom JUnit 5 extension implementing `TestWatcher` and `BeforeEachCallback` that numbers each test run sequentially and prints formatted, color-coded console reports detailing the **STATUS** (`PASSED`/`FAILED`), **INPUT**, **EXPECTED**, and **ACTUAL** results.
+- **`DiceServiceTest`** – Uses JUnit 5 `@RepeatedTest(50)` to validate `d20` roll bounds (`1–20`) across 50 iterations, and `@ParameterizedTest` with `@ValueSource` to test custom polyhedral dice (`d4`, `d6`, `d8`, `d10`, `d12`, `d20`, and `d100` percentile rolls).
+- **`GameServiceTest`** – Unit tests powered by `@ExtendWith(MockitoExtension.class)` (`@Mock`, `@InjectMocks`, `@Captor`) that verify spell casting mana deduction, `RuntimeException` handling when mana is insufficient, character stat restoration during a long rest, and database error propagation without calling external AI services.
+- **`GameControllerTest`** – Web-layer slice tests using `@WebMvcTest(GameController.class)`, `MockMvc`, and `@WithMockUser` to test REST endpoints (`/api/game/cast-spell`, `/api/game/rest`), JSON response payloads, HTTP 400 error formatting via `GlobalExceptionHandler`, and HTTP 401/403 security enforcement for unauthenticated requests.
+
 ---
 
 ## Build & Deployment
@@ -193,3 +203,5 @@ This project is licensed under the **MIT License** – see the [LICENSE](LICENSE
 ---
 
 *Happy coding!*
+
+**Author:** doron merioz

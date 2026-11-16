@@ -13,9 +13,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 
+/**
+ * Configuration component that seeds the database with initial test data on startup.
+ */
 @Configuration
 public class DataInitializer {
 
+    /**
+     * Creates a {@link CommandLineRunner} bean that checks for the default test character
+     * ("Frodo") and inserts it with a BCrypt-hashed password if not already present.
+     *
+     * @param userRepository  the repository used to query and persist {@link User} entities
+     * @param passwordEncoder the encoder used to hash the initial user's password
+     * @return a runner executed after the Spring application context is loaded
+     */
     @Bean
     CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {

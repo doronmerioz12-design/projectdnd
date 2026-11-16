@@ -28,6 +28,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * Handles generic, unexpected exceptions and returns an HTTP 500 Internal Server Error response.
+     *
+     * @param ex      the caught exception
+     * @param request the current web request
+     * @return a structured JSON error response with HTTP status 500
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         Map<String, Object> body = new HashMap<>();
@@ -38,6 +45,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("path", request.getDescription(false).replace("uri=", ""));
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * Handles domain and game-logic runtime exceptions (e.g., insufficient mana or missing user)
+     * and returns an HTTP 400 Bad Request response.
+     *
+     * @param ex      the caught runtime exception
+     * @param request the current web request
+     * @return a structured JSON error response with HTTP status 400
+     */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleGameLogicExceptions(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = new HashMap<>();
@@ -49,6 +65,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Customizes the response for bean validation errors ({@link MethodArgumentNotValidException}),
+     * mapping each invalid field to its validation message.
+     *
+     * @param ex      the validation exception containing binding results
+     * @param headers the HTTP headers to be written to the response
+     * @param status  the selected response status
+     * @param request the current web request
+     * @return a structured JSON response detailing field-level validation failures
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {
