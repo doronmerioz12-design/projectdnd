@@ -1,6 +1,4 @@
-# Project DnD
-
-![Project Logo](docs/logo.png)
+# <img src="docs/logo.png" alt="Project Logo" width="35" height="35" style="vertical-align: middle;" /> Project DnD
 
 A **Spring Boot** based backend for a simple Dungeons & Dragons (DnD) style game service. The application provides REST APIs for managing users, games, characters, and combat actions. It demonstrates clean architecture, layered design, and **global exception handling** that returns consistent JSON error responses.
 
